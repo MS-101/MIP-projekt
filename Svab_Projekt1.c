@@ -55,14 +55,14 @@ void vypisZaznamSuboru(FILE **vstupnySubor, char *menoPriezvisko) {
     printf("\n");
 }
 
-void vypisSuboru(FILE **fr) {
-    if (otvorSubor(fr) == 1) {
+void vypisSuboru(FILE **vstupnySubor) {
+    if (otvorSubor(vstupnySubor) == 1) {
         return;
     }
 
     char menoPriezvisko[DLZKA_MENA + 1];
-    while(fgets(menoPriezvisko, DLZKA_MENA + 1, *fr) != NULL) {
-        vypisZaznamSuboru(fr, menoPriezvisko);
+    while(fgets(menoPriezvisko, DLZKA_MENA + 1, *vstupnySubor) != NULL) {
+        vypisZaznamSuboru(vstupnySubor, menoPriezvisko);
     }
 }
 
