@@ -129,6 +129,10 @@ void vytvorPole(FILE **fr, char ***pole, int *pocetZaznamov) {
                 fgets(str, 51, *fr);
             }
         }
+        *pole = malloc(*pocetZaznamov * sizeof(char**));
+        for (i = 0; i < *pocetZaznamov; i++) {
+            (*pole)[i] = malloc(8 * sizeof(char*));
+        }
 }
 
 int main() {
