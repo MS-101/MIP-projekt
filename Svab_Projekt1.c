@@ -171,7 +171,15 @@ void vypisPola(char **pole, int pocetZaznamov) {
 
 void maxPocetnostPola(char **pole, int pocetZaznamov) {
     if (pole != NULL) {
-
+        int i, y;
+        int pocetnostiPismen[26];
+        for (i = 0; i < 26; i++) {
+            pocetnostiPismen[i] = 0;
+        }
+        int pocetnostiCisiel[10];
+        for (i = 0; i < 10; i++) {
+            pocetnostiCisiel[i] = 0;
+        }
     } else {
         printf("Pole nie je vytvorene\n");
     }
