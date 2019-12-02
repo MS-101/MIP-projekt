@@ -111,13 +111,14 @@ void odmena(FILE **vstupnySubor) {
 
 int pocetZaznamovVSubore(FILE **vstupnySubor) {
     char menoPriezvisko[DLZKA_MENA + 1];
+    char znak;
     int i;
     int pocetZaznamov = 0;
 
     rewind(*vstupnySubor);
     while (fgets(menoPriezvisko, DLZKA_MENA + 1, *vstupnySubor) != NULL) {
         pocetZaznamov++;
-        for (i = 0; i < POCET_UDAJOV_ZAZNAMU - 1; i++) {
+        for (i = 0; i < POCET_UDAJOV_ZAZNAMU; i++) {
             while (getc(*vstupnySubor) != '\n');
         }
     }
@@ -125,32 +126,47 @@ int pocetZaznamovVSubore(FILE **vstupnySubor) {
     return pocetZaznamov;
 }
 
+void vycistiPole(char ***pole) {
+    if (*pole != NULL) {
+        free(*pole);
+    }
+}
+
+void alokujPole(char ***pole, int pocetZaznamov) {
+    int i;
+
+    *pole = malloc(pocetZaznamov * sizeof(char**));
+    for (i = 0; i < pocetZaznamov; i++) {
+        (*pole)[i] = malloc(8 * sizeof(char*));
+    }
+}
+
+void vyplnPole(char ***pole, int pocetZaznamov, FILE **vstupnySubor) {
+    int i, j;
+    char spz[8];
+
+    rewind(*vstupnySubor);
+    fscanf(*vstupnySubor, "%s\n", spz);
+
+    for (i = 0; i < pocetZaznamov; i++) {
+        fscanf(*vstupnySubor, "%s\n", spz);
+        spz[8] = '\0';
+        for (j = 0; j < 8; j++) {
+            (*pole)[i][j] = spz[j];
+        }
+        for (j = 0; j < POCET_UDAJOV_ZAZNAMU; j++) {
+            while (getc(*vstupnySubor) != '\n');
+        }
+    }
+}
+
 void vytvorPole(FILE **vstupnySubor, char ***pole, int *pocetZaznamov) {
     if (*vstupnySubor != NULL) {
-        if (*pole != NULL) {
-            free(*pole);
-        }
-
         *pocetZaznamov = pocetZaznamovVSubore(vstupnySubor);
 
-        int i, y;
-        char str[50];
-        *pole = malloc(*pocetZaznamov * sizeof(char**));
-        for (i = 0; i < *pocetZaznamov; i++) {
-            (*pole)[i] = malloc(8 * sizeof(char*));
-        }
-
-        for (i = 0; i < *pocetZaznamov; i++) {
-            char spz[8];
-            fscanf(*vstupnySubor, "%s\n", spz);
-            spz[8] = '\0';
-            for (y = 0; y < 8; y++) {
-                (*pole)[i][y] = spz[y];
-            }
-            for (y = 0; y < 5; y++) {
-                fgets(str, 51, *vstupnySubor);
-            }
-        }
+        vycistiPole(pole);
+        alokujPole(pole, *pocetZaznamov);
+        vyplnPole(pole, pocetZaznamov, vstupnySubor);
     }
 }
 
