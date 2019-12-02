@@ -253,7 +253,38 @@ void palindromVPoli(char **pole, int pocetZaznamov) {
 
 void zistiPredaj(char ** pole, int pocetZaznamov) {
     if (pole != NULL) {
+        int i, y;
+        int jePalindrom;
+        for (i = 0; i < pocetZaznamov; i++) {
+            jePalindrom = 1;
+            for (y = 0; y < 3; y++) {
+                if (pole[i][y] != pole[i][6 - y]) {
+                    jePalindrom = 0;
+                    break;
+                }
+            }
+            if (jePalindrom == 1) {
+                printf("%c%c\n", pole[i][0], pole[i][1]);
+            }
+        }
+    } else {
+        printf("Pole nie je vytvorene\n");
+    }
+}
 
+void zistiPredaj(char ** pole, int pocetZaznamov) {
+    if (pole != NULL) {
+        int i, y;
+        int pocetnost, indexMax, maxPocetnost = 0;
+        char maxPredaj[pocetZaznamov][3];
+        for (i = 0; i < pocetZaznamov; i++) {
+            pocetnost = 1;
+            for (y = i+1; y < pocetZaznamov; y++) {
+                if (pole[i][0] == pole[y][0] && pole[i][1] == pole[y][1]) {
+                    pocetnost++;
+                }
+            }
+        }
     }
 }
 
