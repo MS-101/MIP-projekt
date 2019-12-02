@@ -6,6 +6,7 @@
 #define DLZKA_SPZ 7
 #define ODMENA_STARE 5.1
 #define ODMENA_NOVE 2.3
+#define ROK 10000
 
 int otvorSubor(FILE **vstupnySubor) {
     //ak sa súbor ešte nebol otvorený, tak sa ho pokúsi otvoriť
@@ -100,7 +101,7 @@ void odmena(FILE **vstupnySubor) {
 
         rewind(*vstupnySubor);
         while(nacitajZaznamSuboru(vstupnySubor, menoPriezvisko, spz, &typAuta, &cena, &datumZamestnania) == 0) {
-            if (aktualnyDatum - datumZamestnania >= 10000) {
+            if (aktualnyDatum - datumZamestnania >= ROK) {
                 vypisOdmenu(menoPriezvisko, typAuta, spz, cena);
             }
         }
