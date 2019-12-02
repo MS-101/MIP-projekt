@@ -63,6 +63,23 @@ int pracovalRok(char *datum, char *aktualnyDatum) {
     aktualnyMesiac = atoi(aktualnyMesiacStr);
     den = atoi(denStr);
     aktualnyDen = atoi(aktualnyDenStr);
+    if (aktualnyRok - rok > 1) {
+        return 1;
+    } else if (aktualnyRok - rok == 1) {
+        if (aktualnyMesiac > mesiac) {
+            return 1;
+        } else if (aktualnyMesiac = mesiac) {
+            if (aktualnyDen >= den) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    } else {
+        return 0;
+    }
 }
 
 void odmena(FILE **fr) {
