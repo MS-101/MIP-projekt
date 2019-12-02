@@ -33,6 +33,42 @@ void vypisSuboru(FILE **fr) {
     }
 }
 
+int pracovalRok(char *datum, char *aktualnyDatum) {
+
+}
+
+void odmena(FILE **fr) {
+    if (*fr != NULL) {
+        #define ODMENA_STARE 5.1
+        #define ODMENA_NOVE 2.3
+
+        char aktualnyDatum[9], datum[9], menoPriezvisko[51], spz[8];
+        int typAuta;
+        double cena, odmena;
+
+        scanf("%s", aktualnyDatum);
+        rewind(*fr);
+        while(fgets(menoPriezvisko, 51, *fr) != NULL) {
+            if (menoPriezvisko[strlen(menoPriezvisko) - 1] == '\n') {
+                menoPriezvisko[strlen(menoPriezvisko) - 1] = '\0';
+            }
+            fgets(spz, 8, *fr);
+            fscanf(*fr, "%d\n", &typAuta);
+            fscanf(*fr, "%lf\n", &cena);
+            fgets(datum, 9, *fr);
+            fscanf(*fr, "\n");
+            if (pracovalRok(datum, aktualnyDatum)) {
+                if (typAuta == 1) {
+                    odmena = cena / 100 * ODMENA_NOVE;
+                } else {
+                    odmena = cena / 100 * ODMENA_STARE;
+                }
+                printf("%s %s %.2f\n", menoPriezvisko, spz, odmena);
+            }
+        }
+    }
+}
+
 int main() {
     FILE *fr = NULL;
     char **pole = NULL;
@@ -43,7 +79,7 @@ int main() {
                 vypisSuboru(&fr);
                 break;
             case 'o':
-                odmena();
+                odmena(&fr);
                 break;
             case 'n':
                 vytvorPole();
