@@ -20,18 +20,33 @@ int otvorSubor(FILE **vstupnySubor) {
     return 0;
 }
 
-void vypisZaznamSuboru(FILE **vstupnySubor, char* menoPriezvisko) {
+void odstranNewLine(char *buf) {
+    int bufLen;
+    bufLen = strlen(buf);
+
+    if (bufLen > 0 && buf[bufLen - 1]  == '\n') {
+        buf[bufLen - 1] = '\0';
+    }
+}
+
+void vypisZaznamSuboru(FILE **vstupnySubor, char *menoPriezvisko) {
     char spz[DLZKA_SPZ + 1];
     int typAuta;
     double cena;
     int datum;
 
+    //načítanie hodnôt zo súboru
     fgets(spz, DLZKA_SPZ + 1, *vstupnySubor);
     fscanf(*vstupnySubor, "%d\n", &typAuta);
     fscanf(*vstupnySubor, "%lf\n", &cena);
     fscanf(*vstupnySubor, "%d\n", &datum);
     fscanf(*vstupnySubor, "\n");
 
+    //odstránenie \n z konca stringov
+    odstranNewLine(menoPriezvisko);
+    odstranNewLine(spz);
+
+    //výpis načítaných hodnôt do konzoly
     printf("meno a priezvisko: %s\n", menoPriezvisko);
     printf("SPZ: %s\n", spz);
     printf("typ auta: %d\n", typAuta);
@@ -47,7 +62,7 @@ void vypisSuboru(FILE **fr) {
 
     char menoPriezvisko[DLZKA_MENA + 1];
     while(fgets(menoPriezvisko, DLZKA_MENA + 1, *fr) != NULL) {
-        vypisZaznamSuboru(&fr, menoPriezvisko);
+        vypisZaznamSuboru(fr, menoPriezvisko);
     }
 }
 
