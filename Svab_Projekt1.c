@@ -133,7 +133,19 @@ void vytvorPole(FILE **fr, char ***pole, int *pocetZaznamov) {
         for (i = 0; i < *pocetZaznamov; i++) {
             (*pole)[i] = malloc(8 * sizeof(char*));
         }
-}
+        for (i = 0; i < *pocetZaznamov; i++) {
+            char spz[8];
+            fscanf(*fr, "%s\n", spz);
+            spz[8] = '\0';
+            for (y = 0; y < 8; y++) {
+                (*pole)[i][y] = spz[y];
+            }
+            for (y = 0; y < 5; y++) {
+                fgets(str, 51, *fr);
+            }
+        }
+    }
+)
 
 int main() {
     FILE *fr = NULL;
