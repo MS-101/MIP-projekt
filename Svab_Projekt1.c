@@ -31,24 +31,27 @@ void odstranNewLine(char *buf) {
     }
 }
 
-void vypisZaznamSuboru(FILE **vstupnySubor, char *menoPriezvisko) {
-    char spz[DLZKA_SPZ + 1];
-    int typAuta;
-    double cena;
-    int datum;
+int nacitajZaznamSuboru(FILE **vstupnySubor, char *menoPriezvisko, char *spz, int *typAuta, double *cena, int *datum) {
+    //ak sa nepodarí načítať meno zo vstupného súboru, tak funkcia nahlási chybu
+    if (fgets(menoPriezvisko, DLZKA_MENA + 1, *vstupnySubor) != NULL) {
+        //načítanie hodnôt zo súboru
+        fgets(spz, DLZKA_SPZ + 1, *vstupnySubor);
+        fscanf(*vstupnySubor, "%d\n", typAuta);
+        fscanf(*vstupnySubor, "%lf\n", cena);
+        fscanf(*vstupnySubor, "%d\n", datum);
+        fscanf(*vstupnySubor, "\n");
 
-    //načítanie hodnôt zo súboru
-    fgets(spz, DLZKA_SPZ + 1, *vstupnySubor);
-    fscanf(*vstupnySubor, "%d\n", &typAuta);
-    fscanf(*vstupnySubor, "%lf\n", &cena);
-    fscanf(*vstupnySubor, "%d\n", &datum);
-    fscanf(*vstupnySubor, "\n");
+        //odstránenie \n z konca stringov
+        odstranNewLine(menoPriezvisko);
+        odstranNewLine(spz);
 
-    //odstránenie \n z konca stringov
-    odstranNewLine(menoPriezvisko);
-    odstranNewLine(spz);
+        return 0;
+    } else {
+        return 1;
+    }
+}
 
-    //výpis načítaných hodnôt do konzoly
+void vypisZaznamSuboru(char *menoPriezvisko, char *spz, int typAuta, double cena, int datum) {
     printf("meno a priezvisko: %s\n", menoPriezvisko);
     printf("SPZ: %s\n", spz);
     printf("typ auta: %d\n", typAuta);
@@ -63,8 +66,13 @@ void vypisSuboru(FILE **vstupnySubor) {
     }
 
     char menoPriezvisko[DLZKA_MENA + 1];
-    while(fgets(menoPriezvisko, DLZKA_MENA + 1, *vstupnySubor) != NULL) {
-        vypisZaznamSuboru(vstupnySubor, menoPriezvisko);
+    char spz[DLZKA_SPZ + 1];
+    int typAuta;
+    double cena;
+    int datum;
+
+    while(nacitajZaznamSuboru(vstupnySubor, menoPriezvisko, spz, &typAuta, &cena, &datum) == 0) {
+        vypisZaznamSuboru(menoPriezvisko, spz, typAuta, cena, datum);
     }
 }
 
