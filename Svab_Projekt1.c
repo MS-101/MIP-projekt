@@ -180,6 +180,15 @@ void maxPocetnostPola(char **pole, int pocetZaznamov) {
         for (i = 0; i < 10; i++) {
             pocetnostiCisiel[i] = 0;
         }
+        for (i = 0; i < pocetZaznamov; i++) {
+            for (y = 0; y < 7; y++) {
+                if (pole[i][y] >= 'A' && pole[i][y] <= 'Z') {
+                    pocetnostiPismen[pole[i][y] - 'A']++;
+                } else if (pole[i][y] >= '0' && pole[i][y] <= '9') {
+                    pocetnostiCisiel[pole[i][y] - '0']++;
+                }
+            }
+        }
     } else {
         printf("Pole nie je vytvorene\n");
     }
