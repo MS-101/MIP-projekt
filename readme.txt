@@ -13,3 +13,7 @@ k - koniec programu
 
 Refaktoring zahàòa:
 ===================
+- vnútro funkcií bolo rozdelené na viac menších funkcií
+- zmenené názvy premenných
+- zjednodušenie komplikovaných algoritmov
+- pridané komentáre
