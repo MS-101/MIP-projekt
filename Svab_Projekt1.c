@@ -284,6 +284,18 @@ void zistiPredaj(char ** pole, int pocetZaznamov) {
                     pocetnost++;
                 }
             }
+            if (pocetnost > maxPocetnost) {
+                maxPocetnost = pocetnost;
+                indexMax = 0;
+                maxPredaj[indexMax][0] = pole[i][0];
+                maxPredaj[indexMax][1] = pole[i][1];
+                maxPredaj[indexMax][2] = '\0';
+            } else if (pocetnost == maxPocetnost) {
+                indexMax++;
+                maxPredaj[indexMax][0] = pole[i][0];
+                maxPredaj[indexMax][1] = pole[i][1];
+                maxPredaj[indexMax][2] = '\0';
+            }
         }
     }
 }
