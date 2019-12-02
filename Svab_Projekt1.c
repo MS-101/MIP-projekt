@@ -149,7 +149,21 @@ void vytvorPole(FILE **fr, char ***pole, int *pocetZaznamov) {
 
 void vypisPola(char **pole, int pocetZaznamov) {
     if (pole != NULL) {
-
+        int i, y;
+        for (i = 0; i < pocetZaznamov; i++) {
+            for (y = 0; y < 2; y++) {
+                printf("%c", pole[i][y]);
+            }
+            printf(" ");
+            for (y = 0; y < 3; y++) {
+                printf("%c", pole[i][y + 2]);
+            }
+            printf(" ");
+            for (y = 0; y < 2; y++) {
+                printf("%c", pole[i][y + 5]);
+            }
+            printf("\n");
+        }
     } else {
         printf("Pole nie je vytvorene\n");
     }
