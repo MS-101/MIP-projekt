@@ -2,16 +2,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-void vypisSuboru(FILE **fr) {
-    if (*fr == NULL) {
-        if ((*fr = fopen("autobazar.txt", "r")) == NULL) {
+void otvorSubor(FILE **vstupnySubor) {
+    //ak sa súbor ešte nebol otvorený, tak sa ho pokúsi otvoriť
+    if (*vstupnySubor == NULL) {
+        if ((*vstupnySubor = fopen("autobazar.txt", "r")) == NULL) {
             printf("Neotvoreny subor\n");
             return;
         }
+    //ak súbor už bol otvorený, tak vráť ukazovateľ v súbore na začiatok
     } else {
         rewind(*fr);
     }
-    //str obsahuje 51 znakov, lebo 51. znak je '/0' ak do neho na��tam z�znam s 50 znakmi.
+}
+
+void vypisSuboru(FILE **fr) {
+    otvorSubor(&fr);
     char str[51];
     double num;
     while(fgets(str, 51, *fr) != NULL) {
