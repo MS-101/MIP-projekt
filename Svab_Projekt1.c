@@ -7,6 +7,7 @@
 #define ODMENA_STARE 5.1
 #define ODMENA_NOVE 2.3
 #define ROK 10000
+#define POCET_UDAJOV_ZAZNAMU 5
 
 int otvorSubor(FILE **vstupnySubor) {
     //ak sa súbor ešte nebol otvorený, tak sa ho pokúsi otvoriť
@@ -108,34 +109,46 @@ void odmena(FILE **vstupnySubor) {
     }
 }
 
-void vytvorPole(FILE **fr, char ***pole, int *pocetZaznamov) {
-    if (*fr != NULL) {
+int pocetZaznamovVSubore(FILE **vstupnySubor) {
+    char menoPriezvisko[DLZKA_MENA + 1];
+    int i;
+    int pocetZaznamov = 0;
+
+    rewind(*vstupnySubor);
+    while (fgets(menoPriezvisko, DLZKA_MENA + 1, *vstupnySubor) != NULL) {
+        pocetZaznamov++;
+        for (i = 0; i < POCET_UDAJOV_ZAZNAMU - 1; i++) {
+            while (getc(*vstupnySubor) != '\n');
+        }
+    }
+
+    return pocetZaznamov;
+}
+
+void vytvorPole(FILE **vstupnySubor, char ***pole, int *pocetZaznamov) {
+    if (*vstupnySubor != NULL) {
         if (*pole != NULL) {
             free(*pole);
         }
-        rewind(*fr);
-        char str[51];
-        *pocetZaznamov = 0;
+
+        *pocetZaznamov = pocetZaznamovVSubore(vstupnySubor);
+
         int i, y;
-        while (fgets(str, 51, *fr) != NULL) {
-            (*pocetZaznamov)++;
-            for (i = 0; i < 5; i++) {
-                fgets(str, 51, *fr);
-            }
-        }
+        char str[50];
         *pole = malloc(*pocetZaznamov * sizeof(char**));
         for (i = 0; i < *pocetZaznamov; i++) {
             (*pole)[i] = malloc(8 * sizeof(char*));
         }
+
         for (i = 0; i < *pocetZaznamov; i++) {
             char spz[8];
-            fscanf(*fr, "%s\n", spz);
+            fscanf(*vstupnySubor, "%s\n", spz);
             spz[8] = '\0';
             for (y = 0; y < 8; y++) {
                 (*pole)[i][y] = spz[y];
             }
             for (y = 0; y < 5; y++) {
-                fgets(str, 51, *fr);
+                fgets(str, 51, *vstupnySubor);
             }
         }
     }
