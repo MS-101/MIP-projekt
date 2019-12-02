@@ -147,6 +147,14 @@ void vytvorPole(FILE **fr, char ***pole, int *pocetZaznamov) {
     }
 )
 
+void vypisPola(char **pole, int pocetZaznamov) {
+    if (pole != NULL) {
+
+    } else {
+        printf("Pole nie je vytvorene\n");
+    }
+}
+
 int main() {
     FILE *fr = NULL;
     char **pole = NULL;
@@ -160,10 +168,10 @@ int main() {
                 odmena(&fr);
                 break;
             case 'n':
-                vytvorPole();
+                vytvorPole(&fr, &pole, &pocetZaznamov);
                 break;
             case 's':
-                vypisPola();
+                vypisPola(pole, pocetZaznamov);
                 break;
             case 'm':
                 maxPocetnostPola();
