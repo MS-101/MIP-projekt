@@ -297,6 +297,9 @@ void zistiPredaj(char ** pole, int pocetZaznamov) {
                 maxPredaj[indexMax][2] = '\0';
             }
         }
+        for (i = 0; i <= indexMax; i++) {
+            printf("%s %d\n", maxPredaj[i], maxPocetnost);
+        }
     }
 }
 
