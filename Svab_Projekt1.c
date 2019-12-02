@@ -34,7 +34,35 @@ void vypisSuboru(FILE **fr) {
 }
 
 int pracovalRok(char *datum, char *aktualnyDatum) {
-
+    int i;
+    int rok, mesiac, den;
+    int aktualnyRok, aktualnyMesiac, aktualnyDen;
+    char rokStr[5], mesiacStr[3], denStr[3];
+    char aktualnyRokStr[5], aktualnyMesiacStr[3], aktualnyDenStr[3];
+    for (i = 0; i < 4; i++) {
+        rokStr[i] = datum[i];
+        aktualnyRokStr[i] = aktualnyDatum[i];
+    }
+    rokStr[4] = '\0';
+    aktualnyRokStr[4] = '\0';
+    for (i = 0; i < 2; i++) {
+        mesiacStr[i] = datum[i+4];
+        aktualnyMesiacStr[i] = aktualnyDatum[i+5];
+    }
+    mesiacStr[2] = '\0';
+    aktualnyMesiacStr[2] = '\0';
+    for (i = 0; i < 2; i++) {
+        denStr[i] = datum[i+6];
+        aktualnyDenStr[i] = aktualnyDatum[i+7];
+    }
+    denStr[2] = '\0';
+    aktualnyDenStr[2] = '\0';
+    rok = atoi(rokStr);
+    aktualnyRok = atoi(aktualnyRokStr);
+    mesiac = atoi(mesiacStr);
+    aktualnyMesiac = atoi(aktualnyMesiacStr);
+    den = atoi(denStr);
+    aktualnyDen = atoi(aktualnyDenStr);
 }
 
 void odmena(FILE **fr) {
