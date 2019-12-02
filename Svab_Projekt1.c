@@ -209,6 +209,14 @@ void maxPocetnostPola(char **pole, int pocetZaznamov) {
     }
 }
 
+void palindromVPoli(char **pole, int pocetZaznamov) {
+    if (pole != NULL) {
+
+    } else {
+        printf("Pole nie je vytvorene\n");
+    }
+}
+
 int main() {
     FILE *fr = NULL;
     char **pole = NULL;
@@ -231,7 +239,7 @@ int main() {
                 maxPocetnostPola(pole, pocetZaznamov);
                 break;
             case 'p':
-                palindromVPoli();
+                palindromVPoli(pole, pocetZaznamov);
                 break;
             case 'z':
                 zistiPredaj();
