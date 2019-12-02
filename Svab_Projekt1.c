@@ -2,6 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+void vypisSuboru(FILE **fr) {
+    if (*fr == NULL) {
+        if ((*fr = fopen("autobazar.txt", "r")) == NULL) {
+            printf("Neotvoreny subor\n");
+            return;
+        }
+    } else {
+        rewind(*fr);
+    }
+}
+
 int main() {
     FILE *fr = NULL;
     char **pole = NULL;
@@ -9,7 +20,7 @@ int main() {
     while (1)  {
         switch (getchar()) {
             case 'v':
-                vypisSuboru();
+                vypisSuboru(&fr);
                 break;
             case 'o':
                 odmena();
