@@ -2,39 +2,52 @@
 #include <stdlib.h>
 #include <string.h>
 
-void otvorSubor(FILE **vstupnySubor) {
+#define DLZKA_MENA 50
+#define DLZKA_SPZ 7
+
+int otvorSubor(FILE **vstupnySubor) {
     //ak sa súbor ešte nebol otvorený, tak sa ho pokúsi otvoriť
     if (*vstupnySubor == NULL) {
         if ((*vstupnySubor = fopen("autobazar.txt", "r")) == NULL) {
             printf("Neotvoreny subor\n");
-            return;
+            return 1;
         }
     //ak súbor už bol otvorený, tak vráť ukazovateľ v súbore na začiatok
     } else {
-        rewind(*fr);
+        rewind(*vstupnySubor);
     }
+
+    return 0;
+}
+
+void vypisZaznamSuboru(FILE **vstupnySubor, char* menoPriezvisko) {
+    char spz[DLZKA_SPZ + 1];
+    int typAuta;
+    double cena;
+    int datum;
+
+    fgets(spz, DLZKA_SPZ + 1, *vstupnySubor);
+    fscanf(*vstupnySubor, "%d\n", &typAuta);
+    fscanf(*vstupnySubor, "%lf\n", &cena);
+    fscanf(*vstupnySubor, "%d\n", &datum);
+    fscanf(*vstupnySubor, "\n");
+
+    printf("meno a priezvisko: %s\n", menoPriezvisko);
+    printf("SPZ: %s\n", spz);
+    printf("typ auta: %d\n", typAuta);
+    printf("cena: %.2f\n", cena);
+    printf("datum: %d\n", datum);
+    printf("\n");
 }
 
 void vypisSuboru(FILE **fr) {
-    otvorSubor(&fr);
-    char str[51];
-    double num;
-    while(fgets(str, 51, *fr) != NULL) {
-        if (str[strlen(str) - 1] == '\n') {
-            str[strlen(str) - 1] = '\0';
-        }
-        printf("meno a priezvisko: %s\n", str);
-        fgets(str, 8, *fr);
-        fscanf(*fr, "\n");
-        printf("SPZ: %s\n", str);
-        fgets(str, 2, *fr);
-        printf("typ auta: %s\n", str);
-        fscanf(*fr, "%lf\n", &num);
-        printf("cena: %.2f\n", num);
-        fgets(str, 9, *fr);
-        printf("datum: %d\n", str);
-        printf("\n");
-        fscanf(*fr, "\n");
+    if (otvorSubor(fr) == 1) {
+        return;
+    }
+
+    char menoPriezvisko[DLZKA_MENA + 1];
+    while(fgets(menoPriezvisko, DLZKA_MENA + 1, *fr) != NULL) {
+        vypisZaznamSuboru(&fr, menoPriezvisko);
     }
 }
 
