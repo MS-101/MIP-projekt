@@ -68,26 +68,29 @@ void vypisSuboru(FILE **vstupnySubor) {
     }
 }
 
-void odmena(FILE **fr) {
-    if (*fr != NULL) {
+void odmena(FILE **vstupnySubor) {
+    if (*vstupnySubor != NULL) {
         int aktualnyDatum, datumZamestnania;
-        char menoPriezvisko[DLZKA_MENA + 1]
+        char menoPriezvisko[DLZKA_MENA + 1];
         char spz[DLZKA_SPZ + 1];
         int typAuta;
         double cena, odmena;
 
-        scanf("%s", datum);
-        rewind(*fr);
-        while(fgets(menoPriezvisko, 51, *fr) != NULL) {
-            if (menoPriezvisko[strlen(menoPriezvisko) - 1] == '\n') {
-                menoPriezvisko[strlen(menoPriezvisko) - 1] = '\0';
-            }
-            fgets(spz, 8, *fr);
-            fscanf(*fr, "%d\n", &typAuta);
-            fscanf(*fr, "%lf\n", &cena);
-            fgets(datum, 9, *fr);
-            fscanf(*fr, "\n");
-            if (pracovalRok(datum, aktualnyDatum)) {
+        scanf("%d", &aktualnyDatum);
+
+        rewind(*vstupnySubor);
+        while(fgets(menoPriezvisko, 51, *vstupnySubor) != NULL) {
+            fscanf(*vstupnySubor, "%d\n", &typAuta);
+            fscanf(*vstupnySubor, "%lf\n", &cena);
+            fgets(spz, 8, *vstupnySubor);
+            fscanf(*vstupnySubor, "%d\n", &datumZamestnania);
+            fscanf(*vstupnySubor, "\n");
+
+            //odstránenie \n z konca stringov
+            odstranNewLine(menoPriezvisko);
+            odstranNewLine(spz);
+
+            if (aktualnyDatum - datumZamestnania >= 10000) {
                 if (typAuta == 1) {
                     odmena = cena / 100 * ODMENA_NOVE;
                 } else {
