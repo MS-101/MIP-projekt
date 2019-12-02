@@ -114,6 +114,23 @@ void odmena(FILE **fr) {
     }
 }
 
+void vytvorPole(FILE **fr, char ***pole, int *pocetZaznamov) {
+    if (*fr != NULL) {
+        if (*pole != NULL) {
+            free(*pole);
+        }
+        rewind(*fr);
+        char str[51];
+        *pocetZaznamov = 0;
+        int i, y;
+        while (fgets(str, 51, *fr) != NULL) {
+            (*pocetZaznamov)++;
+            for (i = 0; i < 5; i++) {
+                fgets(str, 51, *fr);
+            }
+        }
+}
+
 int main() {
     FILE *fr = NULL;
     char **pole = NULL;
