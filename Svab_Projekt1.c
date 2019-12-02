@@ -145,7 +145,7 @@ void vytvorPole(FILE **fr, char ***pole, int *pocetZaznamov) {
             }
         }
     }
-)
+}
 
 void vypisPola(char **pole, int pocetZaznamov) {
     if (pole != NULL) {
@@ -210,48 +210,6 @@ void maxPocetnostPola(char **pole, int pocetZaznamov) {
 }
 
 void palindromVPoli(char **pole, int pocetZaznamov) {
-    if (pole != NULL) {
-        int i, y;
-        int jePalindrom;
-        for (i = 0; i < pocetZaznamov; i++) {
-            jePalindrom = 1;
-            for (y = 0; y < 3; y++) {
-                if (pole[i][y] != pole[i][6 - y]) {
-                    jePalindrom = 0;
-                    break;
-                }
-            }
-            if (jePalindrom == 1) {
-                printf("%c%c\n", pole[i][0], pole[i][1]);
-            }
-        }
-    } else {
-        printf("Pole nie je vytvorene\n");
-    }
-}
-
-void palindromVPoli(char **pole, int pocetZaznamov) {
-    if (pole != NULL) {
-        int i, y;
-        int jePalindrom;
-        for (i = 0; i < pocetZaznamov; i++) {
-            jePalindrom = 1;
-            for (y = 0; y < 3; y++) {
-                if (pole[i][y] != pole[i][6 - y]) {
-                    jePalindrom = 0;
-                    break;
-                }
-            }
-            if (jePalindrom == 1) {
-                printf("%c%c\n", pole[i][0], pole[i][1]);
-            }
-        }
-    } else {
-        printf("Pole nie je vytvorene\n");
-    }
-}
-
-void zistiPredaj(char ** pole, int pocetZaznamov) {
     if (pole != NULL) {
         int i, y;
         int jePalindrom;
