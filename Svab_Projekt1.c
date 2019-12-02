@@ -189,6 +189,21 @@ void maxPocetnostPola(char **pole, int pocetZaznamov) {
                 }
             }
         }
+        int max = pocetnostiPismen[0];
+        char maxChar = 'A';
+        for (i = 1; i < 26; i++) {
+            if (pocetnostiPismen[i] > max) {
+                max = pocetnostiPismen[i];
+                maxChar = 'A' + i;
+            }
+        }
+        for (i = 0; i < 10; i++) {
+            if (pocetnostiCisiel[i] > max) {
+                max = pocetnostiCisiel[i];
+                maxChar = '0' + i;
+            }
+        }
+        printf("%c %d\n", maxChar, max);
     } else {
         printf("Pole nie je vytvorene\n");
     }
