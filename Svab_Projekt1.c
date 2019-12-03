@@ -8,6 +8,16 @@
 #define ODMENA_NOVE 2.3
 #define ROK 10000
 #define POCET_UDAJOV_ZAZNAMU 5
+#define POCET_CISIEL 10
+#define POCET_PISMEN 26
+
+typedef struct zaznam {
+    char menoPriezvisko[DLZKA_MENA + 1];
+    char spz[DLZKA_SPZ + 1];
+    int typAuta;
+    double cena;
+    int datum;
+} ZAZNAM;
 
 int otvorSubor(FILE **vstupnySubor) {
     //ak sa súbor ešte nebol otvorený, tak sa ho pokúsi otvoriť
@@ -33,19 +43,32 @@ void odstranNewLine(char *buf) {
     }
 }
 
-int nacitajZaznamSuboru(FILE **vstupnySubor, char *menoPriezvisko, char *spz, int *typAuta, double *cena, int *datum) {
+int nacitajZaznamSuboru(FILE **vstupnySubor, ZAZNAM **aktualnyZaznam) {
+    char menoPriezvisko[DLZKA_MENA + 1];
+    char spz[DLZKA_SPZ + 1];
+    int typAuta;
+    double cena;
+    int datum;
+
     //ak sa nepodarí načítať meno zo vstupného súboru, tak funkcia nahlási chybu
     if (fgets(menoPriezvisko, DLZKA_MENA + 1, *vstupnySubor) != NULL) {
-        //načítanie hodnôt zo súboru
+        //načítanie hodnôt zo súboru do pomocných premenných
         fgets(spz, DLZKA_SPZ + 1, *vstupnySubor);
-        fscanf(*vstupnySubor, "%d\n", typAuta);
-        fscanf(*vstupnySubor, "%lf\n", cena);
-        fscanf(*vstupnySubor, "%d\n", datum);
+        fscanf(*vstupnySubor, "%d\n", &typAuta);
+        fscanf(*vstupnySubor, "%lf\n", &cena);
+        fscanf(*vstupnySubor, "%d\n", &datum);
         fscanf(*vstupnySubor, "\n");
 
         //odstránenie \n z konca stringov
         odstranNewLine(menoPriezvisko);
         odstranNewLine(spz);
+
+        //prenos hodnôt z pomocných premenných na parameter funkcie
+        strcpy((*aktualnyZaznam) -> menoPriezvisko, menoPriezvisko);
+        strcpy((*aktualnyZaznam) -> spz, spz);
+        (*aktualnyZaznam) -> typAuta = typAuta;
+        (*aktualnyZaznam) -> cena = cena;
+        (*aktualnyZaznam) -> datum = datum;
 
         return 0;
     } else {
@@ -53,12 +76,12 @@ int nacitajZaznamSuboru(FILE **vstupnySubor, char *menoPriezvisko, char *spz, in
     }
 }
 
-void vypisZaznamSuboru(char *menoPriezvisko, char *spz, int typAuta, double cena, int datum) {
-    printf("meno a priezvisko: %s\n", menoPriezvisko);
-    printf("SPZ: %s\n", spz);
-    printf("typ auta: %d\n", typAuta);
-    printf("cena: %.2f\n", cena);
-    printf("datum: %d\n", datum);
+void vypisZaznamSuboru(ZAZNAM *aktualnyZaznam) {
+    printf("meno a priezvisko: %s\n", aktualnyZaznam -> menoPriezvisko);
+    printf("SPZ: %s\n", aktualnyZaznam -> spz);
+    printf("typ auta: %d\n", aktualnyZaznam -> typAuta);
+    printf("cena: %.2f\n", aktualnyZaznam -> cena);
+    printf("datum: %d\n", aktualnyZaznam -> datum);
     printf("\n");
 }
 
@@ -67,45 +90,44 @@ void vypisSuboru(FILE **vstupnySubor) {
         return;
     }
 
-    char menoPriezvisko[DLZKA_MENA + 1];
-    char spz[DLZKA_SPZ + 1];
-    int typAuta;
-    double cena;
-    int datum;
+    ZAZNAM *aktualnyZaznam;
+    aktualnyZaznam = (ZAZNAM*)malloc(sizeof(ZAZNAM));
 
-    while(nacitajZaznamSuboru(vstupnySubor, menoPriezvisko, spz, &typAuta, &cena, &datum) == 0) {
-        vypisZaznamSuboru(menoPriezvisko, spz, typAuta, cena, datum);
+    while(nacitajZaznamSuboru(vstupnySubor, &aktualnyZaznam) == 0) {
+        vypisZaznamSuboru(aktualnyZaznam);
     }
+
+    free(aktualnyZaznam);
 }
 
-void vypisOdmenu(char *menoPriezvisko, int typAuta, char *spz, int cena) {
-    int odmena;
+void vypisOdmenu(ZAZNAM *aktualnyZaznam) {
+    double odmena;
 
-    if (typAuta == 1) {
-        odmena = cena / 100 * ODMENA_NOVE;
+    if (aktualnyZaznam -> typAuta == 1) {
+        odmena = aktualnyZaznam -> cena / 100 * ODMENA_NOVE;
     } else {
-        odmena = cena / 100 * ODMENA_STARE;
+        odmena = aktualnyZaznam -> cena / 100 * ODMENA_STARE;
     }
 
-    printf("%s %s %.2f\n", menoPriezvisko, spz, odmena);
+    printf("%s %s %.2f\n", aktualnyZaznam -> menoPriezvisko, aktualnyZaznam -> spz, odmena);
 }
 
 void odmena(FILE **vstupnySubor) {
     if (*vstupnySubor != NULL) {
-        int aktualnyDatum, datumZamestnania;
-        char menoPriezvisko[DLZKA_MENA + 1];
-        char spz[DLZKA_SPZ + 1];
-        int typAuta;
-        double cena;
+        int aktualnyDatum;
+        ZAZNAM *aktualnyZaznam;
+        aktualnyZaznam = (ZAZNAM*)malloc(sizeof(ZAZNAM));
 
         scanf("%d", &aktualnyDatum);
 
         rewind(*vstupnySubor);
-        while(nacitajZaznamSuboru(vstupnySubor, menoPriezvisko, spz, &typAuta, &cena, &datumZamestnania) == 0) {
-            if (aktualnyDatum - datumZamestnania >= ROK) {
-                vypisOdmenu(menoPriezvisko, typAuta, spz, cena);
+        while(nacitajZaznamSuboru(vstupnySubor, &aktualnyZaznam) == 0) {
+            if (aktualnyDatum - aktualnyZaznam -> datum >= ROK) {
+                vypisOdmenu(aktualnyZaznam);
             }
         }
+
+        free(aktualnyZaznam);
     }
 }
 
@@ -126,65 +148,76 @@ int pocetZaznamovVSubore(FILE **vstupnySubor) {
     return pocetZaznamov;
 }
 
-void vycistiPole(char ***pole) {
-    if (*pole != NULL) {
-        free(*pole);
+void vycistiPole(char ***poleSpz) {
+    if (*poleSpz != NULL) {
+        free(*poleSpz);
     }
 }
 
-void alokujPole(char ***pole, int pocetZaznamov) {
+void alokujPole(char ***poleSpz, int pocetZaznamov) {
     int i;
 
-    *pole = malloc(pocetZaznamov * sizeof(char**));
+    *poleSpz = malloc(pocetZaznamov * sizeof(char**));
     for (i = 0; i < pocetZaznamov; i++) {
-        (*pole)[i] = malloc(8 * sizeof(char*));
+        (*poleSpz)[i] = malloc(8 * sizeof(char*));
     }
 }
 
-void vyplnPole(char ***pole, int pocetZaznamov, FILE **vstupnySubor) {
+void vyplnPole(char ***poleSpz, int pocetZaznamov, FILE **vstupnySubor) {
     int i, j;
-    char spz[8];
 
+    //1. spz je 2. hodnota v súbore
     rewind(*vstupnySubor);
-    fscanf(*vstupnySubor, "%s\n", spz);
+    while (getc(*vstupnySubor) != '\n');
 
     for (i = 0; i < pocetZaznamov; i++) {
-        fscanf(*vstupnySubor, "%s\n", spz);
-        spz[8] = '\0';
-        for (j = 0; j < 8; j++) {
-            (*pole)[i][j] = spz[j];
-        }
-        for (j = 0; j < POCET_UDAJOV_ZAZNAMU; j++) {
-            while (getc(*vstupnySubor) != '\n');
+        //zápis spz do pola SPZ
+        fgets((*poleSpz)[i], DLZKA_SPZ + 1, *vstupnySubor);
+        while (getc(*vstupnySubor) != '\n');
+        (*poleSpz)[i][8] = '\0';
+
+        //preskočenie riadkov na dalšiu spz
+        if (i + 1 < pocetZaznamov) {
+            for (j = 0; j < POCET_UDAJOV_ZAZNAMU; j++) {
+                while (getc(*vstupnySubor) != '\n');
+            }
         }
     }
 }
 
-void vytvorPole(FILE **vstupnySubor, char ***pole, int *pocetZaznamov) {
+void nacitajPole(FILE **vstupnySubor, char ***poleSpz, int *pocetZaznamov) {
     if (*vstupnySubor != NULL) {
         *pocetZaznamov = pocetZaznamovVSubore(vstupnySubor);
 
-        vycistiPole(pole);
-        alokujPole(pole, *pocetZaznamov);
-        vyplnPole(pole, pocetZaznamov, vstupnySubor);
+        vycistiPole(poleSpz);
+        alokujPole(poleSpz, *pocetZaznamov);
+        vyplnPole(poleSpz, *pocetZaznamov, vstupnySubor);
     }
 }
 
-void vypisPola(char **pole, int pocetZaznamov) {
-    if (pole != NULL) {
-        int i, y;
+void vypisPola(char **poleSpz, int pocetZaznamov) {
+    if (poleSpz != NULL) {
+        int i, j;
         for (i = 0; i < pocetZaznamov; i++) {
-            for (y = 0; y < 2; y++) {
-                printf("%c", pole[i][y]);
+            //výpis prvých 2 znakov spz
+            for (j = 0; j < 2; j++) {
+                printf("%c", poleSpz[i][j]);
             }
+
             printf(" ");
-            for (y = 0; y < 3; y++) {
-                printf("%c", pole[i][y + 2]);
+
+            //výpis čísiel spz
+            for (j = 0; j < 3; j++) {
+                printf("%c", poleSpz[i][j + 2]);
             }
+
             printf(" ");
-            for (y = 0; y < 2; y++) {
-                printf("%c", pole[i][y + 5]);
+
+            //výpis posledných znakov spz
+            for (j = 0; j < 2; j++) {
+                printf("%c", poleSpz[i][j + 5]);
             }
+
             printf("\n");
         }
     } else {
@@ -192,60 +225,96 @@ void vypisPola(char **pole, int pocetZaznamov) {
     }
 }
 
-void maxPocetnostPola(char **pole, int pocetZaznamov) {
-    if (pole != NULL) {
-        int i, y;
-        int pocetnostiPismen[26];
-        for (i = 0; i < 26; i++) {
-            pocetnostiPismen[i] = 0;
-        }
-        int pocetnostiCisiel[10];
-        for (i = 0; i < 10; i++) {
-            pocetnostiCisiel[i] = 0;
-        }
-        for (i = 0; i < pocetZaznamov; i++) {
-            for (y = 0; y < 7; y++) {
-                if (pole[i][y] >= 'A' && pole[i][y] <= 'Z') {
-                    pocetnostiPismen[pole[i][y] - 'A']++;
-                } else if (pole[i][y] >= '0' && pole[i][y] <= '9') {
-                    pocetnostiCisiel[pole[i][y] - '0']++;
-                }
+void vynulujPoleCisiel(int **poleCisiel, int pocetPrvkov) {
+    int i;
+
+    for (i = 0; i < pocetPrvkov; i++) {
+        poleCisiel[i] = 0;
+    }
+}
+
+void spocitajZnakyPolaSpz(int *pocetnostiPismen, int *pocetnostiCisiel, char **poleSpz, int pocetZaznamov) {
+    int i, j;
+
+    for (i = 0; i < pocetZaznamov; i++) {
+        for (j = 0; j < DLZKA_SPZ; j++) {
+            //počítanie písmen
+            if (poleSpz[i][j] >= 'A' && poleSpz[i][j] <= 'Z') {
+                pocetnostiPismen[poleSpz[i][j] - 'A']++;
+            //počítanie čísiel
+            } else if (poleSpz[i][j] >= '0' && poleSpz[i][j] <= '9') {
+                pocetnostiCisiel[poleSpz[i][j] - '0']++;
             }
         }
-        int max = pocetnostiPismen[0];
-        char maxChar = 'A';
-        for (i = 1; i < 26; i++) {
-            if (pocetnostiPismen[i] > max) {
-                max = pocetnostiPismen[i];
-                maxChar = 'A' + i;
-            }
+    }
+}
+
+void najdiNajpocetnejsiZnak(int *pocetnostiPismen, int *pocetnostiCisiel, char *maxChar, int *max) {
+    int i, j;
+
+    *max = pocetnostiPismen[0];
+    *maxChar = 'A';
+
+    //najdi najpocetnejsie pismeno
+    for (i = 1; i < POCET_PISMEN; i++) {
+        if (pocetnostiPismen[i] > *max) {
+            *max = pocetnostiPismen[i];
+            *maxChar = 'A' + i;
         }
-        for (i = 0; i < 10; i++) {
-            if (pocetnostiCisiel[i] > max) {
-                max = pocetnostiCisiel[i];
-                maxChar = '0' + i;
-            }
+    }
+
+    //najdi najpocetnejsie cislo
+    for (i = 0; i < POCET_CISIEL; i++) {
+        if (pocetnostiCisiel[i] > *max) {
+            *max = pocetnostiCisiel[i];
+            *maxChar = '0' + i;
         }
+    }
+}
+
+void maxPocetnostPola(char **poleSpz, int pocetZaznamov) {
+    if (poleSpz != NULL) {
+        int max;
+        char maxChar;
+
+        int pocetnostiPismen[POCET_PISMEN];
+        int pocetnostiCisiel[POCET_CISIEL];
+
+        vynulujPoleCisiel(&pocetnostiPismen, POCET_PISMEN);
+        vynulujPoleCisiel(&pocetnostiCisiel, POCET_CISIEL);
+
+        spocitajZnakyPolaSpz(pocetnostiPismen, pocetnostiCisiel, poleSpz, pocetZaznamov);
+
+        najdiNajpocetnejsiZnak(pocetnostiPismen, pocetnostiCisiel, &maxChar, &max);
+
         printf("%c %d\n", maxChar, max);
     } else {
         printf("Pole nie je vytvorene\n");
     }
 }
 
-void palindromVPoli(char **pole, int pocetZaznamov) {
-    if (pole != NULL) {
-        int i, y;
-        int jePalindrom;
+int jePalindrom(char *buf) {
+    int i;
+    int bufLen;
+
+    bufLen = strlen(buf);
+
+    for (i = 0; i < (bufLen / 2); i++) {
+        if (buf[i] != buf[bufLen - 1 - i]) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+void palindromVPoli(char **poleSpz, int pocetZaznamov) {
+    if (poleSpz != NULL) {
+        int i;
+
         for (i = 0; i < pocetZaznamov; i++) {
-            jePalindrom = 1;
-            for (y = 0; y < 3; y++) {
-                if (pole[i][y] != pole[i][6 - y]) {
-                    jePalindrom = 0;
-                    break;
-                }
-            }
-            if (jePalindrom == 1) {
-                printf("%c%c\n", pole[i][0], pole[i][1]);
+            if (jePalindrom(poleSpz[i]) == 1) {
+                printf("%c%c\n", poleSpz[i][0], poleSpz[i][1]);
             }
         }
     } else {
@@ -253,74 +322,92 @@ void palindromVPoli(char **pole, int pocetZaznamov) {
     }
 }
 
-void zistiPredaj(char ** pole, int pocetZaznamov) {
-    if (pole != NULL) {
-        int i, y;
-        int pocetnost, indexMax, maxPocetnost = 0;
-        char maxPredaj[pocetZaznamov][3];
-        for (i = 0; i < pocetZaznamov; i++) {
-            pocetnost = 1;
-            for (y = i+1; y < pocetZaznamov; y++) {
-                if (pole[i][0] == pole[y][0] && pole[i][1] == pole[y][1]) {
-                    pocetnost++;
-                }
-            }
-            if (pocetnost > maxPocetnost) {
-                maxPocetnost = pocetnost;
-                indexMax = 0;
-                maxPredaj[indexMax][0] = pole[i][0];
-                maxPredaj[indexMax][1] = pole[i][1];
-                maxPredaj[indexMax][2] = '\0';
-            } else if (pocetnost == maxPocetnost) {
-                indexMax++;
-                maxPredaj[indexMax][0] = pole[i][0];
-                maxPredaj[indexMax][1] = pole[i][1];
-                maxPredaj[indexMax][2] = '\0';
+void vypisNajziskovejsieOkresy(int pocetNajziskovejsich, char najziskovejsieOkresy[pocetNajziskovejsich][3], int maxPredaneAuta) {
+    int i;
+
+    for (i = 0; i < pocetNajziskovejsich; i++) {
+        printf("%s %d\n", najziskovejsieOkresy[i], maxPredaneAuta);
+    }
+}
+
+void zistiNajziskovejsieOkresy(char **poleSpz, int pocetZaznamov, int *pocetNajziskovejsich, char (*najziskovejsieOkresy)[pocetZaznamov][3], int *maxPredaneAuta) {
+    int i, j;
+    int predaneAuta;
+
+    for (i = 0; i < pocetZaznamov; i++) {
+        predaneAuta = 1;
+        for (j = i+1; j < pocetZaznamov; j++) {
+            if (poleSpz[i][0] == poleSpz[j][0] && poleSpz[i][1] == poleSpz[j][1]) {
+                predaneAuta++;
             }
         }
-        for (i = 0; i <= indexMax; i++) {
-            printf("%s %d\n", maxPredaj[i], maxPocetnost);
+
+        if (predaneAuta > *maxPredaneAuta) {
+            *maxPredaneAuta = predaneAuta;
+            *pocetNajziskovejsich = 1;
+            (*najziskovejsieOkresy)[*pocetNajziskovejsich - 1][0] = poleSpz[i][0];
+            (*najziskovejsieOkresy)[*pocetNajziskovejsich - 1][1] = poleSpz[i][1];
+            (*najziskovejsieOkresy)[*pocetNajziskovejsich - 1][2] = '\0';
+        } else if (predaneAuta == *maxPredaneAuta) {
+            (*pocetNajziskovejsich)++;
+            (*najziskovejsieOkresy)[*pocetNajziskovejsich - 1][0] = poleSpz[i][0];
+            (*najziskovejsieOkresy)[*pocetNajziskovejsich - 1][1] = poleSpz[i][1];
+            (*najziskovejsieOkresy)[*pocetNajziskovejsich - 1][2] = '\0';
         }
     }
 }
 
+void zistiPredaj(char **poleSpz, int pocetZaznamov) {
+    if (poleSpz != NULL) {
+        int pocetNajziskovejsich, maxPredaneAuta = 0;
+        char najziskovejsieOkresy[pocetZaznamov][3];
+
+        zistiNajziskovejsieOkresy(poleSpz, pocetZaznamov, &pocetNajziskovejsich, &najziskovejsieOkresy, &maxPredaneAuta);
+        vypisNajziskovejsieOkresy(pocetNajziskovejsich, najziskovejsieOkresy, maxPredaneAuta);
+    }
+}
+
+int koniecProgramu(FILE **vstupnySubor, char ***poleSpz){
+    if (*vstupnySubor != NULL) {
+        if (fclose(*vstupnySubor) == EOF) {
+            return 1;
+        }
+    }
+    if (*poleSpz != NULL) {
+        free(*poleSpz);
+    }
+    return 0;
+}
+
 int main() {
-    FILE *fr = NULL;
-    char **pole = NULL;
+    FILE *vstupnySubor = NULL;
+    char **poleSpz = NULL;
     int pocetZaznamov = 0;
     while (1)  {
         switch (getchar()) {
             case 'v':
-                vypisSuboru(&fr);
+                vypisSuboru(&vstupnySubor);
                 break;
             case 'o':
-                odmena(&fr);
+                odmena(&vstupnySubor);
                 break;
             case 'n':
-                vytvorPole(&fr, &pole, &pocetZaznamov);
+                nacitajPole(&vstupnySubor, &poleSpz, &pocetZaznamov);
                 break;
             case 's':
-                vypisPola(pole, pocetZaznamov);
+                vypisPola(poleSpz, pocetZaznamov);
                 break;
             case 'm':
-                maxPocetnostPola(pole, pocetZaznamov);
+                maxPocetnostPola(poleSpz, pocetZaznamov);
                 break;
             case 'p':
-                palindromVPoli(pole, pocetZaznamov);
+                palindromVPoli(poleSpz, pocetZaznamov);
                 break;
             case 'z':
-                zistiPredaj(pole, pocetZaznamov);
+                zistiPredaj(poleSpz, pocetZaznamov);
                 break;
             case 'k':
-                if (fr != NULL) {
-                    if (fclose(fr) == EOF) {
-                        return 1;
-                    }
-                }
-                if (pole != NULL) {
-                    free(pole);
-                }
-                return 0;
+                return koniecProgramu(&vstupnySubor, &poleSpz);
                 break;
         }
     }

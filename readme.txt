@@ -17,3 +17,15 @@ Refaktoring zahàòa:
 - zmenené názvy premennıch
 - zjednodušenie komplikovanıch algoritmov
 - pridané komentáre
+
+Vetvy v gite:
+=============
+- development:
+	- zahròuje zmeny v programe vytvorené poèas tvorby projektu
+	- rozdelenı na vetvy vypisSuboru, odmena, nacitajPole, vypisPola, maxPocetnostPola, palindromVPoli a zistiPredaj 
+	- kadá z jeho podradenıch vetiev má v sebe zmeny príkazu prislúchajúce tejto vetve
+	
+- refaktoring:
+	- zahròuje zmeny v programe vytvorené poèas refaktoringu hotového programu
+	- pôvodne mal by rozdelenı na vetvy podobne ako vetva development (refaktoring_vypisSuboru, refaktoring_odmena, ...)
+	- po zistení konfliktov spôsobené pribúdajúcou závislosou medzi funkciami v rôznych vetvách sa ïalšie zmeny refaktoringu robili len priamo vo vetve refaktoring
